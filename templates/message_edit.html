@@ -1,0 +1,16 @@
+<!-- message_edit.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Message</title>
+</head>
+<body>
+    <h2>Edit Message</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Changes</button>
+    </form>
+    <p><a href="{% url 'message:create-message' user_id=message.receiver.id %}">Create Message</a></p>
+</body>
+</html>

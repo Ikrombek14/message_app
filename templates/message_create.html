@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e5ddd5;
+            margin: 0;
+            padding: 20px;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .messages-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            max-width: 80%;
+        }
+        .message.sent {
+            background-color: #dcf8c6;
+            margin-left: auto;
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .message.received {
+            background-color: #fff;
+            margin-right: auto;
+            justify-content: flex-start;
+            text-align: left;
+        }
+        .message img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .message video,
+        .message audio {
+            max-width: 100%;
+            display: block;
+            margin-top: 10px;
+        }
+        .message strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        form input,
+        form button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        form button {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        form button:hover {
+            background-color: #45a049;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Chat with {{ receiver.username }}</h1>
+        <ul class="messages-list">
+            {% for message in messages %}
+                <li class="message {% if message.sent %}sent{% else %}received{% endif %}">
+                    <div>
+                        <strong>{{ message.sender.username }}:</strong> {{ message.message }}
+                        <a href="{% url 'message:edit-message' message.id %}">Edit</a> |
+                        <a href="{% url 'message:delete-message' message.id %}">Delete</a>
+                        {% if message.image %}
+                            <br>
+                            <img src="{{ message.image.url }}" alt="Image">
+                        {% endif %}
+                        {% if message.video %}
+                            <br>
+                            <video controls>
+                                <source src="{{ message.video.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% endif %}
+                        {% if message.audio %}
+                            <br>
+                            <audio controls>
+                                <source src="{{ message.audio.url }}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Send</button>
+        </form>
+        <p class="back-link"><a href="{% url 'message:user-list' %}">Back to users</a></p>
+    </div>
+</body>
+</html>
